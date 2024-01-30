@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('../static/images/daystarbus.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+
+        h1 {
+            color:white;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            background:rgba(83, 186, 227, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        input, select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .payment-button {
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 10px;
+        }
+        .payment-button[disabled] {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>Book here</h1>
+
+    <form id="bookingForm">
+        <label for="route">Select Route:</label>
+        <select id="route" name="route" onchange="getBusesForRoute()">
+            <option value="townToAthi">Nairobi Campus to Athiriver</option>
+            <option value="athiToTown">Athiriver to Nairobi Campus</option>
+        </select>
+
+        <label for="allocatedBuses">Allocated Buses:</label>
+        <select id="busDescription" name="busDescription">
+            <option value="KBC 321A">KBC 321A,Monday 5AM</option>
+            <option value="KDM 624D">KDM 624D,Tuesday 4:30PM</option>
+            <option value="KDM 624D">KCC 311B ,Wednesday 1PM</option>
+            <option value="KDM 624D">KCM 552M,Thursday 5:00PM</option>
+            <option value="KDM 624D">KCM 552M Saturday 9:00AM</option>
+        </select>
+
+      <!--  <select id="allocatedBuses" name="allocatedBuses" required>-->
+        </select>
+
+        <button type="button" id="bookSeatButton" onclick="bookSeat()">Book Seat</button>
+
+        <button type="button" class="payment-button" id="proceedToPaymentButton" onclick="redirectToPayment()" disabled>
+            Proceed to Payment
+        </button>
+    </form>
+
+
+
+<script>
+    
+    function getBusesForRoute() {
+        var route = document.getElementById("route").value;
+        var allocatedBusesSelect = document.getElementById("allocatedBuses");
+
+        fetch("/student/get-buses-for-route", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: "route=" + route,
+        })
+        .then(response => response.json())
+        .then(data => {
+            allocatedBusesSelect.innerHTML = "";
+
+            data.buses.forEach(bus => {
+                var option = document.createElement("option");
+                option.value = bus.ID;
+                option.text = bus.Description + " - " + bus.Day + " " + bus.Time + " (" + bus.SeatsRemaining + " seats remaining)";
+                allocatedBusesSelect.add(option);
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching buses:", error);
+        });
+    }
+
+  
+
+    function validateForm() {
+        return true;
+    }
+
+    function bookSeat() {
+        alert("Proceed to Payment");
+        document.getElementById("proceedToPaymentButton").disabled = false;
+    }
+
+    function redirectToPayment() {
+        
+        var busIDElement = document.getElementById("busID");
+        if (busIDElement) {
+            var busID = busIDElement.value;
+            
+            window.location.href = "/payment";
+        } else {
+            console.error("Element with ID 'busID' not found.");
+        }
+    }
+
+</script>
+</body>`
+</html>

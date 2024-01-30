@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+
+        h1 {
+            color: #3498db;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            background: rgba(173, 216, 230, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: 1px solid #3498db;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+        .sign {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Student Login</h1>
+    <form action="/login" method="POST">
+        <label for="admissionNumber">Admission Number:</label>
+        <input type="text" id="admissionNumber" name="admissionNumber" placeholder="Enter Admission Number" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter Password" required>
+        <button type="submit">Login</button>
+    </form>
+
+    <div class="forgot-password">
+        <p>Forgot your password? <a href="/forgot-password">Reset it here</a>.</p>
+    </div>
+    <div class="sign">
+        <p>If don't have an account ? <a href="/signup">Signup here</a>.</p>
+    </div>
+
+</body>
+</html>
