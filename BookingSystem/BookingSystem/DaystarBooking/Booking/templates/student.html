@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student page</title>
+    <title>Student Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,15 +15,15 @@
         }
 
         h1 {
-            color:white;
+            color: white;
             text-align: center;
             margin-top: 50px;
         }
 
-        form {
+        form, .payment-options {
             max-width: 600px;
             margin: 20px auto;
-            background:rgba(83, 186, 227, 0.5);
+            background: rgba(83, 186, 227, 0.5);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -34,6 +34,7 @@
             margin-bottom: 10px;
             color: #333;
         }
+
         input, select {
             width: calc(100% - 20px);
             padding: 10px;
@@ -53,6 +54,7 @@
             width: 100%;
             box-sizing: border-box;
         }
+
         button:hover {
             background-color: #45a049;
         }
@@ -68,9 +70,18 @@
             box-sizing: border-box;
             margin-top: 10px;
         }
+
         .payment-button[disabled] {
             background-color: #bdc3c7;
             cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .option-button {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -86,77 +97,69 @@
 
         <label for="allocatedBuses">Allocated Buses:</label>
         <select id="busDescription" name="busDescription">
-            <option value="KBC 321A">KBC 321A,Monday 5AM</option>
-            <option value="KDM 624D">KDM 624D,Tuesday 4:30PM</option>
-            <option value="KDM 624D">KCC 311B ,Wednesday 1PM</option>
-            <option value="KDM 624D">KCM 552M,Thursday 5:00PM</option>
-            <option value="KDM 624D">KCM 552M Saturday 9:00AM</option>
-        </select>
-
-      <!--  <select id="allocatedBuses" name="allocatedBuses" required>-->
+            <option value="KBC 321A">KBC 321A, Monday 5AM</option>
+            <option value="KDM 624D">KDM 624D, Tuesday 4:30PM</option>
+            <option value="KCC 311B">KCC 311B, Wednesday 1PM</option>
+            <option value="KCM 552M">KCM 552M, Thursday 5:00PM</option>
+            <option value="KCM 552M">KCM 552M, Saturday 9:00AM</option>
         </select>
 
         <button type="button" id="bookSeatButton" onclick="bookSeat()">Book Seat</button>
 
-        <button type="button" class="payment-button" id="proceedToPaymentButton" onclick="redirectToPayment()" disabled>
+        <button type="button" class="payment-button" id="proceedToPaymentButton" onclick="showPaymentOptions()" disabled>
             Proceed to Payment
         </button>
     </form>
 
+    <div id="paymentOptions" class="payment-options hidden">
+        <h2>Choose Payment Method</h2>
+        <button type="button" class="option-button" onclick="payWithMpesa()">Pay with M-Pesa</button>
+        <button type="button" class="option-button" onclick="payWithCard()">Pay with KCB Card</button>
+    </div>
 
+    <script>
+        function getBusesForRoute() {
+            var route = document.getElementById("route").value;
+            var allocatedBusesSelect = document.getElementById("allocatedBuses");
 
-<script>
-    
-    function getBusesForRoute() {
-        var route = document.getElementById("route").value;
-        var allocatedBusesSelect = document.getElementById("allocatedBuses");
-
-        fetch("/student/get-buses-for-route", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: "route=" + route,
-        })
-        .then(response => response.json())
-        .then(data => {
-            allocatedBusesSelect.innerHTML = "";
-
-            data.buses.forEach(bus => {
-                var option = document.createElement("option");
-                option.value = bus.ID;
-                option.text = bus.Description + " - " + bus.Day + " " + bus.Time + " (" + bus.SeatsRemaining + " seats remaining)";
-                allocatedBusesSelect.add(option);
+            fetch("/student/get-buses-for-route", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: "route=" + route,
+            })
+            .then(response => response.json())
+            .then(data => {
+                allocatedBusesSelect.innerHTML = "";
+                data.buses.forEach(bus => {
+                    var option = document.createElement("option");
+                    option.value = bus.ID;
+                    option.text = bus.Description + " - " + bus.Day + " " + bus.Time + " (" + bus.SeatsRemaining + " seats remaining)";
+                    allocatedBusesSelect.add(option);
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching buses:", error);
             });
-        })
-        .catch(error => {
-            console.error("Error fetching buses:", error);
-        });
-    }
-
-  
-
-    function validateForm() {
-        return true;
-    }
-
-    function bookSeat() {
-        alert("Proceed to Payment");
-        document.getElementById("proceedToPaymentButton").disabled = false;
-    }
-
-    function redirectToPayment() {
-        
-        var busIDElement = document.getElementById("busID");
-        if (busIDElement) {
-            var busID = busIDElement.value;
-            
-            window.location.href = "/payment";
-        } else {
-            console.error("Element with ID 'busID' not found.");
         }
-    }
 
-</script>
-</body>`
+        function bookSeat() {
+            alert("Proceed to Payment");
+            document.getElementById("proceedToPaymentButton").disabled = false;
+        }
+
+        function showPaymentOptions() {
+            document.getElementById("paymentOptions").classList.remove("hidden");
+        }
+
+        function payWithMpesa() {
+            window.location.href = "/payment/mpesa";
+        }
+
+        function payWithCard() {
+            window.location.href = "/payment/card";
+        }
+    </script>
+</body>
 </html>
